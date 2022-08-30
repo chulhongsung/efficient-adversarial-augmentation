@@ -1,2 +1,2 @@
 # efficient-adversarial-augmentation
-Efficient Adversarial Augmentation for Graph Classification 
+Efficient Adversarial Augmentation for Imbalanced Graph Classification 
