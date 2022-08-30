@@ -130,7 +130,7 @@ for seed in range(1):
     # from tensorboardX import SummaryWriter
 
     model = GNN_extractor(5, 300, JK='last', drop_ratio=0.0, graph_pooling = "mean", gnn_type='gin').to(device)
-    model.from_pretrained("init.pth")
+    model.from_pretrained("mgssl/pretrained_model/init.pth")
     model.eval()
 
     linear_model = Linear_predictor(300, 1).to(device)
