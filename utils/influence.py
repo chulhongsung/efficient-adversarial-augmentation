@@ -1,5 +1,5 @@
 import torch
-from torch.autograd.functional import hessian
+from torch.autograd.functional import hessian, hvp
 from torch.autograd import grad
 
 def compute_grad(model, sample, target, criterion):
@@ -9,7 +9,7 @@ def compute_grad(model, sample, target, criterion):
     y = target.view(prediction.shape).to(torch.float64)
     loss = criterion(prediction.double(), (y+1)/2)
 
-    return torch.autograd.grad(loss, list(model.parameters()))
+    return grad(loss, list(model.parameters()))
 
 
 def compute_sample_grads(data, targets):
@@ -30,7 +30,7 @@ def compute_classifier_hessian(model)
     for param in model.parameters():
         all_param.append(param.view(-1))
     
-    hessian_list = torch.autograd.functional.hessian(func, (all_param[0], all_param[1]))
+    hessian_list = hessian(func, (all_param[0], all_param[1]))
 
     tmp_hessian1 = torch.cat((hessian_list[0][0], hessian_list[0][1]), 1)
     tmp_hessian2 = torch.cat((hessian_list[1][0], hessian_list[1][1]), 1)
@@ -60,3 +60,21 @@ def compute_loo_if(model, train_sample_loader):
 # np.unique(trn_batch_y.cpu().numpy(), return_counts=True)
 # np.unique(trn_batch_y[idx].cpu().numpy(), return_counts=True)
 # np.unique(total_y.cpu().numpy(), return_counts=True)
+
+
+### Hessian Vector Product method
+
+# total_x, total_y = next(iter(train_sample_loader))
+# criterion = nn.BCEWithLogitsLoss(reduction = "none")
+
+# def loss_hvp(param):
+#     w = param[:300]
+#     b = param[300:301]
+#     pred = total_x @ w + b 
+#     loss = torch.sum(criterion(pred.squeeze(), (total_y+1)/2))
+#     return loss
+
+# tmp_hvp = hvp(loss_hvp, torch.cat((all_param[0], all_param[1]), 0).unsqueeze(-1), sample_grad)[1]
+
+### Test 
+# assert influence_arr[0] == sample_grad.T @ tmp_hvp
