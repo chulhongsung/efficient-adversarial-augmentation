@@ -44,10 +44,11 @@ def compute_loo_if(model, train_sample_loader):
 
     grad_batch = torch.cat((per_sample_grads[0].squeeze(), per_sample_grads[1]), 1)
     hessian = compute_classifier_hessian(model)
+    inv_hessian = torch.inverse(hessian)
     
     influence_list = []
     for i in range(grad_batch.shape[0]):
-        tmp_influence = (grad_batch[i].unsqueeze(0) @ hessian) @ grad_batch[i].unsqueeze(0).T
+        tmp_influence = (grad_batch[i].unsqueeze(0) @ inv_hessian) @ grad_batch[i].unsqueeze(0).T
         influence_list.append(tmp_influence) 
     
     influence_arr = torch.abs(torch.cat(influence_list, axis=0).squeeze())
