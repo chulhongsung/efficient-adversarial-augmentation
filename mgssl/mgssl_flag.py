@@ -74,31 +74,6 @@ def train(model, loader, optimizer, step_size=0.001, m=3):
         loss.backward()
         optimizer.step()
 
-def train(model, loader, optimizer, step_size=0.001, m=3):
-    model.train()
-
-    for _, batch in enumerate(loader):
-        batch = batch.to(device)
-        # perturb = torch.FloatTensor(batch.id.shape[0], 300).uniform_(-0.01, 0.01).to(device)
-        # perturb.requires_grad_()
-        embedding = model.pool(model.gnn(batch), batch.batch)
-        pred = model.graph_pred_linear(embedding)
-        y = batch.y.view(pred.shape).to(torch.float64)
-
-        #Whether y is non-null or not.
-        is_valid = y**2 > 0
-        #Loss matrix
-        loss_mat = criterion(pred.double(), (y+1)/2)
-        #loss matrix after removing null target
-        loss_mat = torch.where(is_valid, loss_mat, torch.zeros(loss_mat.shape).to(loss_mat.device).to(loss_mat.dtype))
-        loss = torch.sum(loss_mat)/torch.sum(is_valid)
-
-        optimizer.zero_grad()
-        loss.backward()
-
-        optimizer.step()
-
-
 # def eval(model, loader):
 #     model.eval()
 #     y_true = []
