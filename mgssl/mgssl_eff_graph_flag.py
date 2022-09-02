@@ -1,17 +1,12 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 
-from tqdm import tqdm
 import numpy as np
-
-from sklearn.metrics import  precision_score, recall_score, roc_auc_score, roc_curve, auc, confusion_matrix, precision_recall_curve
 
 import pandas as pd
 
 import os
-import shutil
 
 os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
@@ -110,6 +105,6 @@ for seed in range(1):
         print("Epoch:", epoch)
     
     print("Seed:", seed)
-    # torch.save(linear_model, "/content/gdrive/MyDrive/MGSSL/linear_epoch700_0729_hiv_par_2_07_" + str(seed) + ".pth")
+# torch.save(mgssl_bce_eff_flag, "my_model.pth")
 
     
